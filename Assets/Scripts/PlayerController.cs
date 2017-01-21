@@ -1,25 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour {
-//	CharacterController controller;
 	public float speed = 6.0F;
 	public float jumpSpeed = 8.0F;
-//	public float gravity = 10.0f;
 	private Vector3 moveDirection = Vector3.zero;
 	public GameObject pug;
 	public Canvas canvas;
+	public Canvas victoryScreen;
 	public GameObject deathZone;
+	public ParticleSystem plankShower;
+	public int woodCount = 4;
+	public Text txtWoodCount;
 
-//	Collider coll;
 	private Rigidbody playerRigidBody;
 	float distToGround;
 
+	float timer;
+
 	void Start () {
-//		controller = GetComponent<CharacterController>();
 		playerRigidBody = gameObject.GetComponent<Rigidbody>();
-//		coll = gameObject.GetComponent<Collider>();
+		timer = 0f;
 	}
 
 	bool isGrounded() {
@@ -28,15 +31,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
+		timer += Time.deltaTime;
 		moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 		moveDirection = moveDirection.normalized * speed;
 		if (Input.GetButton ("Jump") && isGrounded()) {
-			//moveDirection.y = jumpSpeed;
 			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
-//			playerRigidBody.velocity.y = jumpSpeed * Time.deltaTime;
 
 		}
-//		transform.position += moveDirection * Time.deltaTime;
 		playerRigidBody.MovePosition(transform.position + moveDirection * Time.deltaTime);
 
 		Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
@@ -45,6 +46,31 @@ public class PlayerController : MonoBehaviour {
 			Vector3 playerToMouse = floorHit.point - transform.position;
 			playerToMouse.y = 0f;
 			pug.transform.forward = playerToMouse;
+		}
+
+		if (Input.GetMouseButtonDown (0)) {
+			RaycastHit hitInfo;
+			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
+				if(hitInfo.collider.tag == "crate") {
+					timer = 0f;
+					Destroy (hitInfo.collider.transform.gameObject);
+					plankShower.transform.position = hitInfo.collider.transform.position;
+					plankShower.transform.gameObject.SetActive (true);
+					woodCount++;
+					txtWoodCount.text = string.Concat("Wood Collected: ", woodCount.ToString(), "/5");
+
+					if (woodCount >= 5) {
+						Debug.Log ("you win");
+						victoryScreen.gameObject.SetActive (true);
+						Time.timeScale = 0;
+					}
+
+				}
+			}
+		}
+
+		if (timer >= 2f) {
+			plankShower.transform.gameObject.SetActive (false);
 		}
 	}
 }
