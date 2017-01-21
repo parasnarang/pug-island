@@ -1,10 +1,8 @@
-﻿<Properties StartupItem="Assembly-CSharp-firstpass.csproj">
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/WaveSystem.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerController.cs">
     <Files>
-      <File FileName="Temp/Compiled-FXWaterPro.shader" Line="1" Column="1" />
-      <File FileName="Assets/Standard Assets/Environment/Water/Water/Shaders/FXWaterPro.shader" Line="80" Column="34" />
-      <File FileName="Assets/WaveSystem.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="12" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
