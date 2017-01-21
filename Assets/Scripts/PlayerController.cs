@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 	public float speed = 6.0F;
@@ -14,6 +15,8 @@ public class PlayerController : MonoBehaviour {
 	public ParticleSystem plankShower;
 	public int woodCount = 4;
 	public Text txtWoodCount;
+	public Button btnPlayAgain;
+	public Button btnPlayAgain2;
 
 	private Rigidbody playerRigidBody;
 	float distToGround;
@@ -23,11 +26,18 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		playerRigidBody = gameObject.GetComponent<Rigidbody>();
 		timer = 0f;
+		btnPlayAgain.onClick.AddListener(PlayAgain);
+		btnPlayAgain2.onClick.AddListener(PlayAgain);
 	}
 
 	bool isGrounded() {
 		bool hit = Physics.Raycast (transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.1f);
 		return hit;
+	}
+
+	void PlayAgain() {
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+		Time.timeScale = 1.0f;
 	}
 
 	void FixedUpdate() {
