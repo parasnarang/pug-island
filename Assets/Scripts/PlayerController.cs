@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour {
 	public Button btnPlayAgain2;
 	public AudioClip dogBark;
 	public AudioClip woodBreak;
+	public GameObject[] raftStages;
+	public GameObject RaftParent;
 
 	private AudioSource audio;
 	private Rigidbody playerRigidBody;
@@ -43,7 +45,7 @@ public class PlayerController : MonoBehaviour {
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		Time.timeScale = 1.0f;
 	}
-
+	private GameObject[] raftPcs = new GameObject[5];
 	void FixedUpdate() {
 		timer += Time.deltaTime;
 		moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
@@ -72,8 +74,15 @@ public class PlayerController : MonoBehaviour {
 					Destroy (hitInfo.collider.transform.gameObject);
 					plankShower.transform.position = hitInfo.collider.transform.position;
 					plankShower.transform.gameObject.SetActive (true);
+					GameObject raftPc = Instantiate (raftStages [woodCount], RaftParent.transform.position, Quaternion.identity) as GameObject;
+					raftPc.transform.parent = RaftParent.transform;
+					raftPcs [woodCount] = raftPc;
+					if (woodCount > 0) {
+						Destroy (raftPcs [woodCount - 1]);
+					}
 					woodCount++;
 					txtWoodCount.text = string.Concat("Wood Collected: ", woodCount.ToString(), "/5");
+
 
 					if (woodCount >= 5) {
 						Debug.Log ("you win");
