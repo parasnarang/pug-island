@@ -26,9 +26,11 @@ public class PlayerController : MonoBehaviour {
 	public Button btnStartGame;
 	public GameObject fire;
 
-	private AudioSource audio;
+	private AudioSource _audio;
 	private Rigidbody playerRigidBody;
 	float distToGround;
+
+	private Animator anim;
 
 	float timer;
 
@@ -40,7 +42,8 @@ public class PlayerController : MonoBehaviour {
 		btnPlayAgain.onClick.AddListener(PlayAgain);
 		btnPlayAgain2.onClick.AddListener(PlayAgain);
 		btnStartGame.onClick.AddListener(StartGame);
-		audio = gameObject.GetComponent<AudioSource> ();
+		_audio = gameObject.GetComponent<AudioSource> ();
+		anim = transform.FindChild ("pug").GetComponent<Animator> ();
 		Time.timeScale = 0.0f;
 	}
 
@@ -52,7 +55,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	bool isGrounded() {
-		bool hit = Physics.Raycast (transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.1f);
+		bool hit = Physics.Raycast (transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.5f);
 		return hit;
 	}
 
@@ -87,10 +90,23 @@ public class PlayerController : MonoBehaviour {
 
 		if ( ((Application.platform == RuntimePlatform.Android && CrossPlatformInputManager.GetButton ("Jump")) || Input.GetButton ("Jump")) && isGrounded()) {
 			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
-			audio.PlayOneShot (dogBark);
+			_audio.PlayOneShot (dogBark);
 
 		}
+
+		if (!isGrounded ()) {
+			anim.SetBool ("isJumping", true);
+		} else {
+			anim.SetBool ("isJumping", false);
+		}
+
 		playerRigidBody.MovePosition(transform.position + moveDirection * Time.deltaTime);
+
+		if (moveDirection != Vector3.zero) {
+			anim.SetBool ("isRunning", true);
+		} else {
+			anim.SetBool ("isRunning", false);
+		}
 
 		Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit floorHit;
@@ -105,7 +121,7 @@ public class PlayerController : MonoBehaviour {
 			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
 				if(hitInfo.collider.tag == "crate") {
 					timer = 0f;
-					audio.PlayOneShot (woodBreak, 0.1f);
+					_audio.PlayOneShot (woodBreak, 0.1f);
 					Destroy (hitInfo.collider.transform.gameObject);
 					plankShower.transform.position = hitInfo.collider.transform.position;
 					plankShower.transform.gameObject.SetActive (true);
