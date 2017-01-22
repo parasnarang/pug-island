@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
 	public GameObject pug;
 	public Canvas canvas;
 	public Canvas victoryScreen;
+	public Canvas startScreen;
+	public Canvas scoreScreen;
 	public GameObject deathZone;
 	public ParticleSystem plankShower;
 	public int woodCount = 4;
@@ -21,6 +23,8 @@ public class PlayerController : MonoBehaviour {
 	public AudioClip woodBreak;
 	public GameObject[] raftStages;
 	public GameObject RaftParent;
+	public Button btnStartGame;
+	public GameObject fire;
 
 	private AudioSource audio;
 	private Rigidbody playerRigidBody;
@@ -33,12 +37,21 @@ public class PlayerController : MonoBehaviour {
 		timer = 0f;
 		btnPlayAgain.onClick.AddListener(PlayAgain);
 		btnPlayAgain2.onClick.AddListener(PlayAgain);
+		btnStartGame.onClick.AddListener(StartGame);
 		audio = gameObject.GetComponent<AudioSource> ();
+		Time.timeScale = 0.0f;
 	}
 
 	bool isGrounded() {
 		bool hit = Physics.Raycast (transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.1f);
 		return hit;
+	}
+
+	void StartGame() {
+		startScreen.gameObject.SetActive (false);
+		scoreScreen.gameObject.SetActive (true);
+		fire.GetComponent<AudioSource> ().Play ();
+		Time.timeScale = 1.0f;
 	}
 
 	void PlayAgain() {
