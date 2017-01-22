@@ -116,15 +116,15 @@ public class PlayerController : MonoBehaviour {
 			anim.SetBool ("isRunning", false);
 		}
 
-		Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
-		RaycastHit floorHit;
-		if (controlEnabled && Physics.Raycast (camRay, out floorHit, 100f)) {
-			Vector3 playerToMouse = floorHit.point - transform.position;
-			playerToMouse.y = 0f;
-			pug.transform.forward = playerToMouse;
-		}
-
 		if (controlEnabled && Input.GetMouseButtonDown (0)) {
+			Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit floorHit;
+			if (controlEnabled && Physics.Raycast (camRay, out floorHit, 100f)) {
+				Vector3 playerToMouse = floorHit.point - transform.position;
+				playerToMouse.y = 0f;
+				pug.transform.forward = playerToMouse;
+			}
+
 			RaycastHit hitInfo;
 			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
 				if(hitInfo.collider.tag == "crate") {
