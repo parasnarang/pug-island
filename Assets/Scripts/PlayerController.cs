@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour {
 		RaftParent.GetComponent<SphereCollider> ().enabled = false;
 	}
 
-	void showAndroidControls(bool show){
+	public void showAndroidControls(bool show){
 		Renderer[] renderers = GameObject.Find ("MobileSingleStickControl").GetComponentsInChildren<Renderer>();
 		foreach (Renderer r in renderers){
 			r.enabled = show;
