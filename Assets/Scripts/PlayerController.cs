@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
 	float timer;
 
 	void Start () {
+		startScreen.gameObject.SetActive (true);
 		playerRigidBody = gameObject.GetComponent<Rigidbody>();
 		timer = 0f;
 		btnPlayAgain.onClick.AddListener(PlayAgain);
