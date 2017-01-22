@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			RaycastHit hitInfo;
-			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
+			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 7.0f)) {
 				if(hitInfo.collider.tag == "crate") {
 					timer = 0f;
 					_audio.PlayOneShot (woodBreak, 0.1f);
