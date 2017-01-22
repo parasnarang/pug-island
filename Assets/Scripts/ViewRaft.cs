@@ -19,6 +19,7 @@ public class ViewRaft : MonoBehaviour {
 			victoryScreen.gameObject.SetActive (true);
 			raftReadyScreen.gameObject.SetActive(false);
 			player.GetComponent<PlayerController> ().controlEnabled = false;
+			player.GetComponent<PlayerController> ().showAndroidControls (false);
 //			anim.SetBool ("isRunning", false);
 //			anim.SetBool ("isJumping", false);
 //			Time.timeScale = 0f;
