@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour {
 	public Canvas scoreScreen;
 	public GameObject deathZone;
 	public ParticleSystem plankShower;
-	public int woodCount = 4;
+	public int woodCount = 0;
 	public Text txtWoodCount;
 	public Button btnPlayAgain;
 	public Button btnPlayAgain2;
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject RaftParent;
 	public Button btnStartGame;
 	public GameObject fire;
-\
+
 	private AudioSource audio;
 	private Rigidbody playerRigidBody;
 	float distToGround;
