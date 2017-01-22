@@ -87,6 +87,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	
 		moveDirection = moveDirection.normalized * speed;
+		pug.transform.forward = moveDirection;
 
 		if ( ((Application.platform == RuntimePlatform.Android && CrossPlatformInputManager.GetButton ("Jump")) || Input.GetButton ("Jump")) && isGrounded()) {
 			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
