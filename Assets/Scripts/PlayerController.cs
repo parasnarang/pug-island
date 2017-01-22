@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Start () {
 		startScreen.gameObject.SetActive (true);
-		showAndroidControls (false);
+//		showAndroidControls (false);
 		playerRigidBody = gameObject.GetComponent<Rigidbody>();
 		timer = 0f;
 		btnPlayAgain.onClick.AddListener(PlayAgain);
@@ -50,10 +50,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void showAndroidControls(bool show){
-		Renderer[] renderers = GameObject.Find ("MobileSingleStickControl").GetComponentsInChildren<Renderer>();
-		foreach (Renderer r in renderers){
-			r.enabled = show;
-		}
+		GameObject.Find ("MobileSingleStickControl").gameObject.SetActive (show);
 	}
 
 	bool isGrounded() {
