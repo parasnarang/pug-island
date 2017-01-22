@@ -5,14 +5,15 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
+	public bool controlEnabled = true;
 	public float speed = 6.0F;
 	public float jumpSpeed = 8.0F;
 	private Vector3 moveDirection = Vector3.zero;
 	public GameObject pug;
 	public Canvas canvas;
-	public Canvas victoryScreen;
 	public Canvas startScreen;
 	public Canvas scoreScreen;
+	public Canvas raftReadyScreen;
 	public GameObject deathZone;
 	public ParticleSystem plankShower;
 	public int woodCount = 0;
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour {
 		_audio = gameObject.GetComponent<AudioSource> ();
 		anim = transform.FindChild ("pug").GetComponent<Animator> ();
 		Time.timeScale = 0.0f;
+		RaftParent.GetComponent<SphereCollider> ().enabled = false;
 	}
 
 	void showAndroidControls(bool show){
@@ -73,6 +75,7 @@ public class PlayerController : MonoBehaviour {
 
 	void PlayAgain() {
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+		controlEnabled = true;
 		Time.timeScale = 1.0f;
 	}
 
@@ -80,19 +83,25 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate() {
 		timer += Time.deltaTime;
 	
-		if (Application.platform == RuntimePlatform.Android) {
-			moveDirection = new Vector3(CrossPlatformInputManager.GetAxisRaw("Horizontal"), 0, CrossPlatformInputManager.GetAxisRaw("Vertical"));
-		} else {
-			moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-		}
+		if (controlEnabled) {
+			if (Application.platform == RuntimePlatform.Android) {
+				moveDirection = new Vector3 (CrossPlatformInputManager.GetAxisRaw ("Horizontal"), 0, CrossPlatformInputManager.GetAxisRaw ("Vertical"));
+			} else {
+				moveDirection = new Vector3 (Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical"));
+			}
 	
-		moveDirection = moveDirection.normalized * speed;
-		pug.transform.forward = moveDirection;
+			moveDirection = moveDirection.normalized * speed;
+			if (moveDirection != Vector3.zero) {
+				pug.transform.forward = Vector3.Lerp(pug.transform.forward, moveDirection, Time.deltaTime);
+			}
 
-		if ( ((Application.platform == RuntimePlatform.Android && CrossPlatformInputManager.GetButton ("Jump")) || Input.GetButton ("Jump")) && isGrounded()) {
-			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
-			_audio.PlayOneShot (dogBark);
+			if (((Application.platform == RuntimePlatform.Android && CrossPlatformInputManager.GetButton ("Jump")) || Input.GetButton ("Jump")) && isGrounded ()) {
+				playerRigidBody.velocity = new Vector3 (0, jumpSpeed * Time.deltaTime, 0);
+				_audio.PlayOneShot (dogBark);
 
+			}
+
+			playerRigidBody.MovePosition(transform.position + moveDirection * Time.deltaTime);
 		}
 
 		if (!isGrounded ()) {
@@ -100,8 +109,6 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			anim.SetBool ("isJumping", false);
 		}
-
-		playerRigidBody.MovePosition(transform.position + moveDirection * Time.deltaTime);
 
 		if (moveDirection != Vector3.zero) {
 			anim.SetBool ("isRunning", true);
@@ -111,13 +118,13 @@ public class PlayerController : MonoBehaviour {
 
 		Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit floorHit;
-		if (Physics.Raycast (camRay, out floorHit, 100f)) {
+		if (controlEnabled && Physics.Raycast (camRay, out floorHit, 100f)) {
 			Vector3 playerToMouse = floorHit.point - transform.position;
 			playerToMouse.y = 0f;
 			pug.transform.forward = playerToMouse;
 		}
 
-		if (Input.GetMouseButtonDown (0)) {
+		if (controlEnabled && Input.GetMouseButtonDown (0)) {
 			RaycastHit hitInfo;
 			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
 				if(hitInfo.collider.tag == "crate") {
@@ -137,9 +144,12 @@ public class PlayerController : MonoBehaviour {
 
 
 					if (woodCount >= 5) {
-						Debug.Log ("you win");
-						victoryScreen.gameObject.SetActive (true);
-						Time.timeScale = 0;
+//						Debug.Log ("you win");
+//						victoryScreen.gameObject.SetActive (true);
+						raftReadyScreen.gameObject.SetActive(true);
+						RaftParent.GetComponent<SphereCollider> ().enabled = true;
+						timer = 0f;
+//						Time.timeScale = 0;
 					}
 
 				}
@@ -148,6 +158,10 @@ public class PlayerController : MonoBehaviour {
 
 		if (timer >= 2f) {
 			plankShower.transform.gameObject.SetActive (false);
+		}
+
+		if (timer >= 5f) {
+			raftReadyScreen.gameObject.SetActive(false);
 		}
 	}
 }
