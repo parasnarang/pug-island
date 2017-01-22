@@ -17,7 +17,10 @@ public class PlayerController : MonoBehaviour {
 	public Text txtWoodCount;
 	public Button btnPlayAgain;
 	public Button btnPlayAgain2;
+	public AudioClip dogBark;
+	public AudioClip woodBreak;
 
+	private AudioSource audio;
 	private Rigidbody playerRigidBody;
 	float distToGround;
 
@@ -28,6 +31,7 @@ public class PlayerController : MonoBehaviour {
 		timer = 0f;
 		btnPlayAgain.onClick.AddListener(PlayAgain);
 		btnPlayAgain2.onClick.AddListener(PlayAgain);
+		audio = gameObject.GetComponent<AudioSource> ();
 	}
 
 	bool isGrounded() {
@@ -46,6 +50,7 @@ public class PlayerController : MonoBehaviour {
 		moveDirection = moveDirection.normalized * speed;
 		if (Input.GetButton ("Jump") && isGrounded()) {
 			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
+			audio.PlayOneShot (dogBark);
 
 		}
 		playerRigidBody.MovePosition(transform.position + moveDirection * Time.deltaTime);
@@ -63,6 +68,7 @@ public class PlayerController : MonoBehaviour {
 			if(Physics.Raycast(transform.position, pug.transform.forward.normalized - new Vector3(0, 0.1f, 0), out hitInfo, 10.0f)) {
 				if(hitInfo.collider.tag == "crate") {
 					timer = 0f;
+					audio.PlayOneShot (woodBreak, 0.1f);
 					Destroy (hitInfo.collider.transform.gameObject);
 					plankShower.transform.position = hitInfo.collider.transform.position;
 					plankShower.transform.gameObject.SetActive (true);
