@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject RaftParent;
 	public Button btnStartGame;
 	public GameObject fire;
+	public GameObject androidControls;
 
 	private AudioSource audio;
 	private Rigidbody playerRigidBody;
@@ -33,6 +34,7 @@ public class PlayerController : MonoBehaviour {
 	float timer;
 
 	void Start () {
+		showAndroidControls (false);
 		playerRigidBody = gameObject.GetComponent<Rigidbody>();
 		timer = 0f;
 		btnPlayAgain.onClick.AddListener(PlayAgain);
@@ -40,6 +42,13 @@ public class PlayerController : MonoBehaviour {
 		btnStartGame.onClick.AddListener(StartGame);
 		audio = gameObject.GetComponent<AudioSource> ();
 		Time.timeScale = 0.0f;
+	}
+
+	void showAndroidControls(bool show){
+		Renderer[] renderers = GameObject.Find ("MobileSingleStickControl").GetComponentsInChildren<Renderer>();
+		foreach (Renderer r in renderers){
+			r.enabled = show;
+		}
 	}
 
 	bool isGrounded() {
@@ -52,18 +61,31 @@ public class PlayerController : MonoBehaviour {
 		scoreScreen.gameObject.SetActive (true);
 		fire.GetComponent<AudioSource> ().Play ();
 		Time.timeScale = 1.0f;
+		if (Application.platform == RuntimePlatform.Android) {
+			showAndroidControls (true);
+		} else {
+			showAndroidControls (false);
+		}
 	}
 
 	void PlayAgain() {
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		Time.timeScale = 1.0f;
 	}
+
 	private GameObject[] raftPcs = new GameObject[5];
 	void FixedUpdate() {
 		timer += Time.deltaTime;
-		moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+	
+		if (Application.platform == RuntimePlatform.Android) {
+			moveDirection = new Vector3(CrossPlatformInputManager.GetAxisRaw("Horizontal"), 0, CrossPlatformInputManager.GetAxisRaw("Vertical"));
+		} else {
+			moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		}
+	
 		moveDirection = moveDirection.normalized * speed;
-		if (Input.GetButton ("Jump") && isGrounded()) {
+
+		if ( ((Application.platform == RuntimePlatform.Android && CrossPlatformInputManager.GetButton ("Jump")) || Input.GetButton ("Jump")) && isGrounded()) {
 			playerRigidBody.velocity = new Vector3(0, jumpSpeed * Time.deltaTime, 0);
 			audio.PlayOneShot (dogBark);
 
