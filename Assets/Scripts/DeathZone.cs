@@ -9,7 +9,7 @@ public class DeathZone : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Destroy(other.transform.FindChild("pug").gameObject);
+//		Destroy(other.transform.FindChild("pug").gameObject);
 		Time.timeScale = 0;
 		canvas.gameObject.SetActive (true);
 	}
